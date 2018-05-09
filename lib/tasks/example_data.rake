@@ -20,11 +20,39 @@ namespace :seed do
     end
 
     def random_report_category
-      categories = ['Plumbing',
-                    'Anti Social Behaviour',
-                    'Locks',
-                    'Leaks',
-                    'Repairs']
+      categories = ['Adaptations',
+                    'Basins and Sinks',
+                    'Baths and Showers',
+                    'Communal Areas and Door Entry',
+                    'Drainage',
+                    'Doors',
+                    'Electrics',
+                    'Floors Walls and Ceilings',
+                    'Garages',
+                    'Gutters and Rainwater Pipes',
+                    'Heating and Hot Water',
+                    'Kitchen Units',
+                    'Locks and Fittings',
+                    'Outside the Property',
+                    'Roofing',
+                    'Stairs',
+                    'Toilets',
+                    'Water Services',
+                    'Windows and Glazing',
+                    'Alcohol Related Nuisance',
+                    'Criminal Behaviour (Other)',
+                    'Drugs/ Substance Misuse',
+                    'Hate Related Incidents',
+                    'Litter/Fly Tipping',
+                    'Noise',
+                    'Nuisance from Vehicles',
+                    'Pets & Animal Nuisance',
+                    'Vandalism & Damage to Property',
+                    'Verbal Abuse/  Intimidation',
+                    'Misuse of Public Spaces',
+                    'Garden Nuisance',
+                    'Domestic Abuse',
+                    'Other Physical Violence']
 
       return(categories.sample)
     end
@@ -50,7 +78,7 @@ namespace :seed do
           (rand(3) + 1).times do
             new_report = Report.create!(
               category: random_report_category,
-              description: Faker::Lorem.paragraph,
+              description: Faker::Lorem.sentence,
               profile_id: new_profile.id,
               organisation_id: organisation.id
             )
