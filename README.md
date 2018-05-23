@@ -5,20 +5,28 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
 
 * System dependencies
 
-* Configuration
+Version 5.1.x of Rails is used.
+
+* Installation
+
+Clone the repository and then run 
+
+bundle install
 
 * Database creation
 
-* Database initialization
+The database needs to be Portgres, because the multi tenancy uses seperate schemas (ie sets of tables) for each tenant.
+
+rake db:setup
+
+* Create example data
+
+rake seed:create 
 
 * How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
+Run rspec
 
-* Deployment instructions
-
-* ...

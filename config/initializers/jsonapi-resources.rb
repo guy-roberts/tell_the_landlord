@@ -3,7 +3,8 @@ JSONAPI.configure do |config|
   config.json_key_format = :underscored_key
 
   #:underscored_route, :camelized_route, :dasherized_route, or custom
-  #config.route_format = :camelized_route
+  #
+  config.route_format = :underscored_route
 
   # Send the page count so that the UI pagination can work
   config.top_level_meta_include_page_count = true

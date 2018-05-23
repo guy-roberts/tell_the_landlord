@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   jsonapi_resources :reports
   jsonapi_resources :profiles
   jsonapi_resources :organisations
+  jsonapi_resources :report_categories
 end

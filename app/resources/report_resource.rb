@@ -1,5 +1,6 @@
 class ReportResource < JSONAPI::Resource
   model_name 'Report'
+  has_one :profile
   attributes :category, :description, :latitude, :longitude, :created_at, :name_of_profile
 
   filters :category

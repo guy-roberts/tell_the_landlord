@@ -1,7 +1,8 @@
 class AuthenticateUser
-  def initialize(email, password)
+  def initialize(email, password, subdomain)
     @email = email
     @password = password
+    @subdomain = subdomain
   end
 
   # Service entry point
@@ -11,12 +12,14 @@ class AuthenticateUser
 
   private
 
-  attr_reader :email, :password
+  attr_reader :email, :password, :subdomain
 
   # verify user credentials
   def user
     user = User.find_by(email: email)
-    return user if user && user.authenticate(password)
+    return user if user &&
+                   user.authenticate(password) &&
+                   user.subdomain === subdomain
     # raise Authentication error if credentials are invalid
     raise(ExceptionHandler::AuthenticationError, Message.invalid_credentials)
   end

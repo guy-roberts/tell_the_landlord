@@ -4,6 +4,7 @@ class User < ApplicationRecord
 
   # Model associations
   has_one :organisation, foreign_key: :id
-  # Validations
-  validates_presence_of :name, :email, :password_digest
+
+  validates_uniqueness_of :name, :subdomain
+  validates_presence_of :name, :email, :password_digest, :subdomain
 end

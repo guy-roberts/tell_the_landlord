@@ -20,6 +20,12 @@ namespace :seed do
     end
 
     def random_report_category
+      categories = ReportCategory.all
+
+      return(categories.sample.description)
+    end
+
+    def create_report_categories
       categories = ['Adaptations',
                     'Basins and Sinks',
                     'Baths and Showers',
@@ -54,7 +60,10 @@ namespace :seed do
                     'Domestic Abuse',
                     'Other Physical Violence']
 
-      return(categories.sample)
+      categories.each do |category|
+        cat = ReportCategory.new description: category
+        cat.save!
+      end
     end
 
     def create_profiles
@@ -68,9 +77,9 @@ namespace :seed do
               address3: Faker::Address.city,
               postcode: Faker::Address.postcode,
               email: Faker::Internet.email,
-              phone: Faker::PhoneNumber.phone_number,
-              gender: rand(100) > 50 ? 'M' : 'F',
-              notes: Faker::Lorem.paragraph,
+              mobile_phone: Faker::PhoneNumber.phone_number,
+              home_phone: Faker::PhoneNumber.phone_number,
+              tenant_reference: Faker::Coffee.blend_name,
               organisation_id: organisation.id
               )
           new_profile.save!
@@ -88,13 +97,25 @@ namespace :seed do
     end
 
     def create_user
-      User.create!(name: 'Guy', email: 'guy@home.com', password: 'domrob66')
+      unless User.find_by_name 'Guy'
+        User.create!(name: 'Guy', email: 'guy@home.com', password: 'domrob66')
+      end
     end
 
     Faker::Config.locale = 'en-GB'
 
-    create_organisations
-    create_profiles
+    if Apartment.tenant_names.include? 'some-housing-association'
+      Apartment::Tenant.drop('some-housing-association')
+    end
+
+
+    Apartment::Tenant.create('some-housing-association')
+
+    Apartment::Tenant.switch('some-housing-association') do
+      create_report_categories
+      create_organisations
+      create_profiles
+    end
 
   end
 end
