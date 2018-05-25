@@ -4,7 +4,10 @@ RSpec.describe 'Organisations API', type: :request do
   # initialize test data
   let(:user) { create(:user) }
 
-  let!(:organisations) { create_list(:organisation, 1) }
+  let!(:organisations) {
+    Apartment::Tenant.switch! user.subdomain
+    create_list(:organisation, 1)
+  }
   let(:organisation_id) { organisations.first.id }
 
   # authorize request
@@ -18,7 +21,7 @@ RSpec.describe 'Organisations API', type: :request do
     it 'returns organisations' do
       # Note `json` is a custom helper to parse JSON responses
       expect(json).not_to be_empty
-      expect(json.size).to eq(1)
+      expect(json["data"].length).to eq(1)
     end
 
     it 'returns status code 200' do
