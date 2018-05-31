@@ -1,22 +1,36 @@
 require 'rails_helper'
 
 RSpec.describe 'Organisations API', type: :request do
-  # initialize test data
-  let(:user) { create(:user) }
+
+  tenant_name = Faker::Lorem.word.downcase
+
+  before :all do
+    Apartment::Tenant.create tenant_name
+
+    Apartment::Tenant.switch! tenant_name
+
+    #host! "http://end.#{tenant_name}.#{ENV["DOMAIN"]}"
+
+  end
+
+  after :all do
+    Apartment::Tenant.drop tenant_name
+  end
+
+  let(:user) { create(:user, subdomain: tenant_name) }
 
   let!(:organisations) {
-    Apartment::Tenant.switch! user.subdomain
     create_list(:organisation, 1)
   }
   let(:organisation_id) { organisations.first.id }
 
   # authorize request
-  let(:headers) { valid_headers }
+  let(:headers) { valid_headers.merge('HTTP_SERVER_NAME' => "#{tenant_name}.lvh.me:3000)")}
 
   # Test suite for GET /organisations
   describe 'GET /organisations' do
     # make HTTP get request before each example
-    before { get '/organisations', params: {}, headers: headers }
+    before { get('/organisations', params: {}, headers: headers) }
 
     it 'returns organisations' do
       # Note `json` is a custom helper to parse JSON responses
@@ -36,7 +50,7 @@ RSpec.describe 'Organisations API', type: :request do
     context 'when the record exists' do
       it 'returns the organisation' do
         expect(json).not_to be_empty
-        expect(json['id']).to eq(organisation_id)
+        expect(json['data']['id']).to eq(organisation_id.to_s)
       end
 
       it 'returns status code 200' do
@@ -55,7 +69,9 @@ RSpec.describe 'Organisations API', type: :request do
       it 'returns a not found message' do
         get "/organisations/100", params: {}, headers: headers
 
-        expect(response.body).to match(/Couldn't find Organisation/)
+        json = JSON.parse response.body
+
+        expect(json['errors'][0]['title']).to match(/Record not found/)
       end
     end
   end
@@ -65,7 +81,7 @@ RSpec.describe 'Organisations API', type: :request do
     # valid payload
     let(:valid_attributes) do
       # send json payload
-      { name: 'Learn Elm' }.to_json
+      { name: 'Some attribute' }.to_json
     end
 
     let(:invalid_attributes) do
@@ -79,7 +95,7 @@ RSpec.describe 'Organisations API', type: :request do
       }
 
       xit 'creates a organisation' do
-        expect(json['name']).to eq('Learn Elm')
+        expect(json['data']['name']).to eq('Some attribute')
       end
 
       xit 'returns status code 201' do
